@@ -1,0 +1,18 @@
+<ion-view title="Double Task">
+    <ion-content overflow-scroll="true" padding="true" class="has-header">
+        
+        <div ng-hide="authData" class="card" ng-click="login()">
+		  <button class="item">
+		  Log In with Google
+		  </button>
+		</div>
+
+		<div class="card" ng-show="authData">
+		  <div class="item item-text-wrap">
+		    Hello {{authData.google.displayName}}!
+		  </div>
+		</div>
+
+    </ion-content>
+</ion-view>
+

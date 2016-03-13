@@ -1,0 +1,12 @@
+<ion-view title="Double Task">
+    <ion-content overflow-scroll="true" padding="true" class="has-header">
+        <div>
+            <p>Fidgeting is good for you in order to focus or good for evaluating your mood levels. Tap the phone on any way so you can start measuring your fidgets.</p>
+        </div>
+        <button class="button button-stable button-block" ng-click="tapMe()">Tap me!</button>
+        <p>You have tapped {{ fidgets.length }}</p>
+        <ul>
+        	<li ng-repeat="fidget in fidgets">{{ fidget.time }}</li>
+        </ul>
+    </ion-content>
+</ion-view>
