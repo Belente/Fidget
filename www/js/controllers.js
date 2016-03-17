@@ -7,19 +7,9 @@ angular.module('app.controllers', [])
 .controller('loginCtrl', function($scope, Auth, $state) {
 
 	$scope.login = function() {
-	    Auth.$authWithOAuthRedirect("google").then(function(authData) {
-	      // User successfully logged in
-	    }).catch(function(error) {
-	      if (error.code === "TRANSPORT_UNAVAILABLE") {
-	        Auth.$authWithOAuthPopup("google").then(function(authData) {
-	          // User successfully logged in. We can log to the console
-	          // since we’re using a popup here
-	          console.log(authData);
-	        });
-	      } else {
-	        // Another error occurred
-	        console.log(error);
-	      }
+	    Auth.$authWithOAuthPopup("google").then(function(authData) {
+	    	$scope.authData = authData;
+	    	$state.go('menu.doubleTask');
 	    });
 	};
 
@@ -28,29 +18,44 @@ angular.module('app.controllers', [])
 	    console.log("Not logged in yet");
 	  } else {
 	    console.log("Logged in as", authData);
+	    $scope.authData = authData; // This will display the user's name in our view
 	    $state.go('menu.doubleTask');
 	  }
-	  $scope.authData = authData; // This will display the user's name in our view
 	});
 
 })
    
 .controller('doubleTaskCtrl', function($scope, Fidgets) {
 
-	var fidgetsRef = new Firebase("https://fidget.firebaseio.com/figets");
-
 	$scope.fidgets = Fidgets;
 
-	var now = moment();
-	var later = moment().add(1, 'minute')
-	var query = fidgetsRef.orderByChild('time'); //.startAt(now).endAt(later);
+	var start = 0;
+	var fidgets = 0;
+	var difference = 0;
+	var inactivity = 0;
+
+	var interval = setInterval(checkTaps, 1000);
+
+	function checkTaps () {
+		if (!start) return false;
+		inactivity++;
+		if (inactivity > 6) {
+			$scope.fidgets.$add({
+				duration: new Date().getSeconds() - (start.getSeconds() + inactivity),
+				fidgets: fidgets
+			});
+			fidgets = 0;
+			start = 0;
+			inactivity = 0;	
+		} 
+	}
 
 	$scope.tapMe = function () {
-		console.log(new Date());
-		$scope.fidgets.$add({
-			time: new Date().toString()
-		});
-		console.log($scope.fidgets);
+		if (!start) {
+			start = new Date();
+		}
+		fidgets++;
+		inactivity = 0;		
 	};
 
 })
